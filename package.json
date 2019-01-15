@@ -1,5 +1,16 @@
 {
     "name": "honzachalupa-helpers",
     "version": "0.0.1",
-    "author": "Jan Chalupa <janchalupa@outlook.cz> (https://www.honzachalupa.cz/)"
+    "main": "index.js",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/honzachalupa/honzachalupa-helpers.git"
+    },
+    "keywords": [],
+    "author": "Jan Chalupa <janchalupa@outlook.cz> (https://www.honzachalupa.cz/)",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/honzachalupa/honzachalupa-helpers/issues"
+    },
+    "homepage": "https://github.com/ashleygwilliams/honzachalupa-helpers"
   }
