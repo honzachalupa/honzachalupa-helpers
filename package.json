@@ -1,0 +1,49 @@
+{
+  "name": "@honzachalupa/helpers",
+  "version": "0.1.4",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honzachalupa/honzachalupa-helpers.git"
+  },
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "clear && webpack --mode production",
+    "publish": "clear && npm run build && npm publish"
+  },
+  "keywords": [],
+  "author": "Jan Chalupa <janchalupa@outlook.cz> (https://www.honzachalupa.cz/)",
+  "bugs": {
+    "url": "https://github.com/honzachalupa/honzachalupa-helpers/issues"
+  },
+  "homepage": "https://github.com/ashleygwilliams/honzachalupa-helpers",
+  "license": "ISC",
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "react": "^16.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-decorators": "^7.2.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "@starmandeluxe/babel-plugin-react-component-data-attribute": "^0.6.0",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^1.0.0",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-flowtype": "^3.2.1",
+    "eslint-plugin-fp": "^2.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.12.3",
+    "path": "^0.12.7",
+    "webpack": "^4.28.1",
+    "webpack-cli": "^3.2.1"
+  }
+}
