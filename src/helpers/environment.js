@@ -1,18 +1,7 @@
 /* globals __BUILDTARGET__ */
 
-/**
- * @returns
- */
-function isDevEnvironment() {
-    return __BUILDTARGET__ === 'dev';
-}
-
-/**
- * @returns
- */
-function isProdEnvironment() {
-    return __BUILDTARGET__ === 'prod';
-}
+const isDevEnvironment = () => __BUILDTARGET__ === 'dev';
+const isProdEnvironment = () => __BUILDTARGET__ === 'prod';
 
 export default {
     isDevEnvironment,

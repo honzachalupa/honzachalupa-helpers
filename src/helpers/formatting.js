@@ -1,115 +1,105 @@
-import _d from './data';
+import numeral from 'numeral';
+import { isValid } from './data';
 
-/**
- * @param {string} value
- * @returns
- */
-function camelize(value) {
-    return value.replace(/^([A-Z])|[\s-]+(\w)/g, (match, p1, p2) => {
-        if (p2) return p2.toUpperCase();
+numeral.register('locale', 'cs', {
+    delimiters: {
+        thousands: ' ',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+    },
+    currency: {
+        symbol: 'Kč'
+    }
+});
 
-        return p1.toLowerCase();
-    });
-}
+numeral.locale('cs');
 
-/**
- * @param {string} value
- * @param {string} separator
- * @returns
- */
-function decamelize(value, separator) {
-    separator = typeof separator === 'undefined' ? '_' : separator;
-
-    return value
-        .replace(/([a-z\d])([A-Z])/g, `$1${separator}$2`)
-        .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, `$1${separator}$2`)
-        .toLowerCase();
-}
-
-/**
- * @param {number | string} value
- * @returns
- */
-function addThousandSeparators(value) {
-    const isNaN = Number.isNaN(value);
-    const isNegative = value < 0;
-
-    value = Math.round(value * 100) / 100;
-
-    if (!isNaN) {
-        const numbers = value.toString().replace('-', '').replace('.', ',').split('');
-        numbers.reverse();
-
-        const formatedArray = [];
-
-        let i = 1;
-        numbers.forEach(number => {
-            formatedArray.push(number);
-
-            if (i % 3 === 0) {
-                formatedArray.push(' ');
+const getUnitSymbol = (value, units) => {
+    switch (units) {
+        case 'currency':
+            return ' Kč';
+        case 'years':
+            if (value === 1) {
+                return ' rok';
+            } else if (value < 5) {
+                return ' roky';
+            } else {
+                return ' let';
             }
+        case 'days':
+            if (value === 1) {
+                return ' den';
+            } else if (value < 5) {
+                return ' dny';
+            } else {
+                return ' dnů';
+            }
+        case 'adults':
+            if (value === 1) {
+                return ' dospělý';
+            } else if (value <= 4) {
+                return ' dospělí';
+            } else {
+                return ' dospělých';
+            }
+        case 'childrens':
+            if (value === 1) {
+                return ' dítě';
+            } else if (value < 5) {
+                return ' děti';
+            } else {
+                return ' dětí';
+            }
+        case 'percents':
+            return '%';
+        case 'pieces':
+            return ' ks';
+        default:
+            return '';
+    }
+};
 
-            i += 1;
-        });
+const boolToLabel = (value, trueLabel = window.helpersConfig.localization.YES, falseLabel = window.helpersConfig.localization.NO) => value.toString() === 'true' ? trueLabel : falseLabel;
 
-        let formated = isNegative ? '-' : '';
-        formated += formatedArray.reverse().join('').trim();
+const formatValue = (value = 0, units = null, forceShowDecimals = false) => {
+    if (!isValid(value)) {
+        value = 0;
+    }
 
-        return formated;
+    let formatted = value.toString();
+
+    if (units === 'percents') {
+        formatted = parseFloat(formatted.replace(',', '.'));
+        formatted = numeral(formatted).format('0,000.00').replace(/0*$/, '').replace(/,$/, '');
+    } else if (units === 'boolean') {
+        return boolToLabel(formatted);
     } else {
-        return '-';
-    }
-}
+        formatted = parseFloat(formatted.replace(',', '.'));
 
-/**
- * @param {number} value
- * @param {number} [decimalsCount=2]
- * @returns
- */
-function limitDecimals(value, decimalsCount = 2) {
-    const afterDotCount = 10 ** decimalsCount;
-
-    return (Math.round(value * afterDotCount) / afterDotCount).toString().replace('.', ',');
-}
-
-/**
- * @param {bool | string} value
- * @param {string} [trueValue='Ano']
- * @param {string} [falseValue='Ne']
- * @returns
- */
-function boolToLabel(value, trueValue = 'Ano', falseValue = 'Ne') {
-    return value.toString() === 'true' ? trueValue : falseValue;
-}
-
-/**
- *
- *
- * @param {number | string} value
- * @returns
- */
-function formatCurrency(value) {
-    // eslint-disable-next-line no-useless-escape
-    const split = value.toString().split(/[\.,]/);
-    const integer = split[0];
-    let decimals = split[1] || '00';
-    const decimalsLength = !_d.isValid(decimals) ? 0 : decimals.length;
-
-    if (decimalsLength < 2) {
-        decimals = `${decimals}${'0'.repeat(2 - decimalsLength)}`;
-    } else if (decimalsLength > 2) {
-        decimals = Math.round(decimals / (10 ** (decimalsLength - 2)));
+        formatted = forceShowDecimals ?
+            numeral(formatted).format('0,000.00').replace(/0*$/, '').replace(/,$/, '') :
+            numeral(formatted).format('0,000');
     }
 
-    return `${addThousandSeparators(integer)},${decimals} Kč`;
-}
+    return `${formatted}${getUnitSymbol(value, units)}`;
+};
+
+const camelize = value => value.replace(/^([A-Z])|[\s-]+(\w)/g, (match, p1, p2) => (p2 || p1).toLowerCase());
+const decamelize = (value, separator = '_') => value.replace(/([a-z\d])([A-Z])/g, `$1${separator}$2`).replace(/([A-Z]+)([A-Z][a-z\d]+)/g, `$1${separator}$2`).toLowerCase();
+const formatCurrency = value => `${formatValue(value)}${getUnitSymbol(value, 'currency')}`;
+const removeZeros = (value) => value.replace(/0+/g, '');
 
 export default {
     camelize,
     decamelize,
-    addThousandSeparators,
-    limitDecimals,
     boolToLabel,
-    formatCurrency
+    formatValue,
+    getUnitSymbol,
+    formatCurrency,
+    removeZeros
 };

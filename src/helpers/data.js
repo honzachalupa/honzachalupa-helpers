@@ -1,11 +1,21 @@
 import isEmpty from 'ramda/src/isEmpty';
 import equals from 'ramda/src/equals';
 
-/**
- * @param {Object} object
- * @returns
- */
-function objectToArray(object) {
+const isValid_validate = value => {
+    const isUndefined = value === undefined;
+    const isUndefinedString = String(value) === 'undefined';
+    const isNull = value === null;
+    const isNullString = String(value) === 'null';
+    const isNaN = Number.isNaN(value);
+    const isEmptyString = value === '';
+    const isSpaceString = value === ' ';
+    const isNoneString = value === 'none';
+    const isOther = isEmpty(value);
+
+    return !(isUndefined || isUndefinedString || isNull || isNullString || isNaN || isEmptyString || isSpaceString || isNoneString || isOther);
+};
+
+const objectToArray = object => {
     const flattened = [];
 
     Object.keys(object).forEach(key => {
@@ -19,70 +29,21 @@ function objectToArray(object) {
     });
 
     return flattened;
-}
+};
 
-/**
- * @param {string | number} value
- * @returns
- */
-function isNumber(value) {
-    const intPatt = /^-?\d+$/;
-    const floatPatt = /^-?\d+.?\d+$/;
-
-    return intPatt.test(value) || floatPatt.test(value);
-}
-
-/**
- * @param {any | any[]} values
- * @returns
- */
-function isValid(...values) {
-    return Object.values(values.map(value => isValid_validate(value))).reduce((x, y) => x && y);
-}
-
-/**
- * @param {any} value
- * @returns
- */
-function isValid_validate(value) {
-    const isUndefined = value === undefined;
-    const isUndefinedString = String(value) === 'undefined';
-    const isNull = value === null;
-    const isNullString = String(value) === 'null';
-    const isEmptyString = value === '';
-    const isSpaceString = value === ' ';
-    const isNoneString = value === 'none';
-    const isOther = isEmpty(value);
-
-    return !(isUndefined || isUndefinedString || isNull || isNullString || isEmptyString || isSpaceString || isNoneString || isOther);
-}
-
-/**
- * @param {Objects[]} objects
- * @returns
- */
-function objectsAreDifferent(...objects) {
-    return !equals(...objects);
-}
-
-/**
- * @param {Array} [array=[]]
- * @param {any} value
- * @returns
- */
-function push(array = [], value) {
+const push = (array = [], value) => {
     array.push(value);
 
     return array;
-}
+};
 
-/**
- * @param {Object} object
- * @returns
- */
-function getIterableObject(object) {
-    return Object.entries(object).map(entry => entry[1]);
-}
+const objectsAreDifferent = (...objects) => !equals(...objects);
+const getIterableObject = object => Object.entries(object).map(entry => entry[1]);
+const switch_ = (value, cases) => cases[Object.keys(cases).find(key => key === value)];
+const isNumber = value => /^-?\d+$/.test(value) || /^-?\d+.?\d+$/.test(value);
+const getSelectLabel = (optionId, options) => options.find(option => option.id === optionId).label;
+
+export const isValid = (...values) => Object.values(values.map(value => isValid_validate(value))).reduce((x, y) => x && y);
 
 export default {
     objectToArray,
@@ -90,5 +51,7 @@ export default {
     isValid,
     objectsAreDifferent,
     push,
-    getIterableObject
+    getIterableObject,
+    switch: switch_,
+    getSelectLabel
 };

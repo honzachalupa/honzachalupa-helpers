@@ -1,3 +1,22 @@
+window.helpersConfig = {
+    localization: {
+        YES: 'Yes',
+        NO: 'No'
+    },
+    serviceWorker: {
+        path: 'sw.js',
+        scope: '/'
+    }
+};
+
+export function setOptions(options, showInitMessage = true) {
+    if (showInitMessage) {
+        console.log('[@honzachalupa/helpers] Options:', options);
+    }
+
+    window.helpersConfig = { ...window.helpersConfig, ...options };
+}
+
 export {
     default as _a,
     default as app
@@ -9,8 +28,7 @@ export {
 } from './helpers/browser';
 
 export {
-    default as _c,
-    default as context
+    default as Context
 } from './helpers/context';
 
 export {

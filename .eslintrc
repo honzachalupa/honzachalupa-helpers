@@ -71,6 +71,7 @@
         "space-before-function-paren": 0,
         "strict": 0,
         "radix": 0,
-        "function-paren-newline": 0
+        "function-paren-newline": 0,
+        "operator-linebreak": 0
     }
 }

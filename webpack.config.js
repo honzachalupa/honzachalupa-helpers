@@ -1,5 +1,6 @@
 const path = require('path');
 const CleanPlugin = require('clean-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 
 module.exports = () => ({
     entry: './src/index.js',
@@ -10,8 +11,18 @@ module.exports = () => ({
         umdNamedDefine: true
     },
     devtool: 'source-map',
+    devServer: {
+        contentBase: path.resolve(__dirname, 'dist'),
+        host: '0.0.0.0',
+        historyApiFallback: true
+    },
     plugins: [
-        new CleanPlugin(['./dist'])
+        new CleanPlugin(['./dist']),
+        new HtmlPlugin({
+            template: path.resolve(__dirname, 'src/index.html'),
+            filename: 'index.html',
+            inject: true
+        })
     ],
     module: {
         rules: [
@@ -22,29 +33,7 @@ module.exports = () => ({
                     {
                         loader: 'babel-loader',
                         options: {
-                            plugins: [
-                                ['@babel/plugin-proposal-decorators', { legacy: true }],
-                                ['@babel/plugin-proposal-class-properties', { loose: true }],
-                                '@babel/plugin-proposal-object-rest-spread',
-                                '@babel/plugin-syntax-dynamic-import',
-                                '@starmandeluxe/babel-plugin-react-component-data-attribute'
-                            ],
-                            presets: [
-                                '@babel/preset-react',
-                                ['@babel/preset-env', {
-                                    targets: {
-                                        browsers: [
-                                            'last 2 Chrome versions',
-                                            'last 2 Firefox versions',
-                                            'last 2 Safari versions',
-                                            'last 2 iOS versions',
-                                            'Android >= 4.4',
-                                            'Edge >= 12',
-                                            'Explorer >= 11'
-                                        ]
-                                    }
-                                }]
-                            ]
+                            presets: ['@babel/preset-env']
                         }
                     },
                     'eslint-loader'

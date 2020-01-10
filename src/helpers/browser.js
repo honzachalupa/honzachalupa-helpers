@@ -3,30 +3,20 @@
  * @param {string | number} value
  * @param {number} [exdays=30]
  */
-function setCookie(key, value, exdays = 30) {
+const setCookie = (key, value, exdays = 30) => {
     const date = new Date();
     date.setTime(date.getTime() + (exdays * 24 * 60 * 60 * 1000));
 
     const expires = `expires=${date.toUTCString()}`;
 
     document.cookie = `${key}=${value};${expires};path=/`;
-}
+};
 
 /**
  * @param {string | number} key
  * @returns
  */
-function getCookie(key) {
-    const cookie = readCookieString(key);
-
-    return (/^{.*}$/.test(cookie)) ? JSON.parse(cookie) : cookie;
-}
-
-/**
- * @param {string | number} key
- * @returns
- */
-function readCookieString(key) {
+const readCookieString = key => {
     const name = `${key}=`;
     const decodedCookie = decodeURIComponent(document.cookie);
     const ca = decodedCookie.split(';');
@@ -44,57 +34,67 @@ function readCookieString(key) {
     }
 
     return '';
-}
+};
+
+/**
+ * @param {string | number} key
+ * @returns
+ */
+const getCookie = key => {
+    const cookie = readCookieString(key);
+
+    return (/^{.*}$/.test(cookie)) ? JSON.parse(cookie) : cookie;
+};
 
 /**
  * @returns
  */
-function getBrowserName() {
-    if (navigator.userAgent.includes('Edge')) {
-        return 'Edge';
-    } else if ((navigator.userAgent.includes('Opera') || navigator.userAgent.includes('OPR'))) {
-        return 'Opera';
-    } else if (navigator.userAgent.includes('Chrome')) {
-        return 'Chrome';
-    } else if (navigator.userAgent.includes('Safari')) {
-        return 'Safari';
-    } else if (navigator.userAgent.includes('Firefox')) {
-        return 'Firefox';
-    } else {
-        return 'IE';
-    }
-}
+const getBrowserName = () => navigator.userAgent.includes('Edge') ? 'Edge' :
+    navigator.userAgent.includes('Opera') || navigator.userAgent.includes('OPR') ? 'Opera' :
+        navigator.userAgent.includes('Chrome') ? 'Chrome' :
+            navigator.userAgent.includes('Safari') ? 'Safari' :
+                navigator.userAgent.includes('Firefox') ? 'Firefox' : 'IE';
 
 /**
  * @returns
  */
-function getPlatformName() {
+const getPlatformName = () => {
     const { userAgent, platform } = window.navigator;
-    const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
-    const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
-    const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
 
-    if (macosPlatforms.includes(platform)) {
-        return 'Mac OS';
-    } else if (iosPlatforms.includes(platform)) {
-        return 'iOS';
-    } else if (windowsPlatforms.includes(platform)) {
-        return 'Windows';
-    } else if (/Android/.test(userAgent)) {
-        return 'Android';
-    } else if (/Linux/.test(platform)) {
-        return 'Linux';
-    } else {
-        return 'unknown';
-    }
-}
+    return ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'].includes(platform) ? 'Mac OS' :
+        ['iPhone', 'iPad', 'iPod'].includes(platform) ? 'iOS' :
+            ['Win32', 'Win64', 'Windows', 'WinCE'].includes(platform) ? 'Windows' :
+                /Android/.test(userAgent) ? 'Android' :
+                    /Linux/.test(platform) ? 'Linux' : 'unknown';
+};
+
+/**
+ * @param {function} callback
+ * @param {number} delay
+ * @returns
+ */
+const throttler = (callback, delay) => {
+    let lastCall = 0;
+
+    return (...args) => {
+        const now = (new Date()).getTime();
+
+        if (now - lastCall < delay) {
+            return null;
+        }
+
+        lastCall = now;
+
+        return callback(...args);
+    };
+};
 
 /**
  * @param {function} callback
  * @param {boolean} [runOnMount=true]
  * @returns
  */
-function onWindowResize(callback, runOnMount = true) {
+const onWindowResize = (callback, runOnMount = true) => {
     if (typeof callback === 'function') {
         const resizeEvent = throttler(() => {
             const { clientWidth: width, clientHeight: height } = document.body;
@@ -132,28 +132,7 @@ function onWindowResize(callback, runOnMount = true) {
     } else {
         throw new Error('Callback must be a function.');
     }
-}
-
-/**
- * @param {function} callback
- * @param {number} delay
- * @returns
- */
-function throttler(callback, delay) {
-    let lastCall = 0;
-
-    return (...args) => {
-        const now = (new Date()).getTime();
-
-        if (now - lastCall < delay) {
-            return null;
-        }
-
-        lastCall = now;
-
-        return callback(...args);
-    };
-}
+};
 
 export default {
     setCookie,
